@@ -16,6 +16,15 @@ class aplication():
         self.frameDown = Frame(self.root)
         self.frameDown.pack(side=BOTTOM)
 
+        self.text1 = Label(self.text,text='IPv4', font=("Arial",10))
+        self.text1.grid(row=0,column=0,padx=10,pady=10)
+        self.text2 = Label(self.text,text='Hora 24h', font=("Arial",10))
+        self.text2.grid(row=1,column=0,padx=10,pady=10)
+        self.text3 = Label(self.text,text='URLs', font=("Arial",10))
+        self.text3.grid(row=2,column=0,padx=10,pady=10)
+        self.text4 = Label(self.text,text='Mastercard', font=("Arial",10))
+        self.text4.grid(row=3,column=0,padx=10,pady=10)
+
         self.t1 = Entry(self.text,width=40)
         self.t1.grid(row=0,column=1,padx=10,pady=10)
         self.t2 = Entry(self.text,width=40)
@@ -51,7 +60,7 @@ class aplication():
         self.root.mainloop()
         
     def validar(self,num):
-        if num == 1:        #Verificador de IDs
+        if num == 1:        #Verificador de IPv4
             textvalidar = self.t1.get()
             x = re.search("^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$",textvalidar)
             if (x):
@@ -85,6 +94,9 @@ class aplication():
         self.l1.config(fg='black',text='...')
         self.t2.delete(first=0,last='end')
         self.l2.config(fg='black',text='...')
+        self.t3.delete(first=0,last='end')
         self.l3.config(fg='black',text='...')
+        self.t4.delete(first=0,last='end')
+        self.l4.config(fg='black',text='...')
 
 app=aplication()
