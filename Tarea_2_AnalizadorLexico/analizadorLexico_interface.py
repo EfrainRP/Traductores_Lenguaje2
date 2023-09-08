@@ -188,6 +188,7 @@ class Ui_MainWindow(object):
                     elif estado==6:
                         if cadena[indice]=='|' or cadena[indice]=='&':
                             estado=20
+                            lexema+=cadena[indice]
                             token='opLogico'
                             indice+=1
                             IDtoken=15

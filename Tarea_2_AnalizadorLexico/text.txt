@@ -1,0 +1,70 @@
+cadena0=" var var variable1  _varae2 3_varaible varia#ble 1234243 ==  if else  "
+cadena1="asdsadsasdadssa"
+cadena2="XDXDXDXDXDXD"
+cadena3="if ( n==1 ): \n\tprint(h)   else"
+cadena4="1.233..."
+lexicosimple=1
+
+elementos=[]
+estado=0
+indice=0
+cadena=cadena0+'$'
+while(indice<=(len(cadena)-1)  and estado==0):  
+        lexema=''
+        token='error'
+        while(indice<=(len(cadena)-1) and estado!=20):
+            if estado==0:
+                if(cadena[indice].isspace()):
+                    estado=0
+                elif cadena[indice].isalpha() or cadena[indice]=='_':
+                    estado=4
+                    lexema+=cadena[indice]
+                    token='id'
+                elif cadena[indice]=='$':
+                    estado=20
+                    lexema+=cadena[indice]
+                    token='pesos'
+                elif cadena[indice]=='=':
+                    
+                    lexema+=cadena[indice]
+                    token='asignación'
+                    estado=5                    
+                else:
+                    estado=20
+                    token='error'
+                    lexema=cadena[indice]
+                indice+=1
+            elif estado==4:
+                if cadena[indice].isdigit() or cadena[indice].isalpha() or cadena[indice]=='_':
+                    estado=4
+                    lexema+=cadena[indice]
+                    token='id'
+                    indice+=1
+                else:
+                    estado=20
+            elif estado==5:
+                if cadena[indice]!='=':
+                    estado=20
+                else:
+                    estado=20
+                    lexema+=cadena[indice]
+                    token='opRelacional'
+                    indice+=1
+                
+        estado=0
+        elementos.append({'token':token,'lexema':lexema})
+
+for elemento in elementos:
+    if elemento['lexema']=="if":
+        elemento['token']="condicional SI"
+    if elemento['lexema']=="else":
+        elemento['token']="else"
+    print(elemento)
+
+int main(){
+    int a;
+    a=a*1;
+    if(a==2){
+        gotoxy(1,2);
+    }
+}
