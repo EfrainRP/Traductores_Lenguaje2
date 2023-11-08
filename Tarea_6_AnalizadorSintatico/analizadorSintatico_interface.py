@@ -245,50 +245,49 @@ class Ui_MainWindow(object):
             #print(elemento)
         return elementos    # elementos({'IDtoken':IDtoken,'token':token,'lexema':lexema})
 
-    def analizadorSintatico(self,lexicoAnalizado):
-        '''fila = pilapop
-        columna = lexico[cont]
-        accion = tabla[fila][columna]
-        if (accion ==-1):
-            aceptar
-        if (accion > 0):
-            push(lexico[cont])
-            push(accion)
-        if (accion <-1):
-            pops
-            fila=ptop()
-            columna=ladoIzq
-            push(tabla[fila][columna])'''
-        
-        with open('Tarea_6_AnalizadorSintatico\GR2slrTable.txt','r') as archive:
+    def analizadorSintatico(self,lexicoAnalizado):  
+        with open('Tarea_6_AnalizadorSintatico\GR2slrTable.txt','r') as archive: #Lectura del archivo de la tabla sintatica
             tableSintax = []
             for line in archive:
-                line = line.strip() #Quito los '\n' de ambos lados de la cadena del renglon
-                tableSintax.append(line.split()[1::])    #se agrega una lista de la cadena omitiendo los espacios y el primer valor del texto, como es el numero de la fila
+                line = line.strip() #Quito los '\n' de ambos lados de la cadena del renglon 
+                line = list(map(int,line.split()[1::])) #Mapeo de la lista de cadena a enteros, omitiendo los espacios y el primer valor del texto, como es el numero de la fila
+                tableSintax.append(line)    #se agrega una lista de la cadena 
 
-        with open('Tarea_6_AnalizadorSintatico\GR2slrRulesId.txt','r') as archive:
+        with open('Tarea_6_AnalizadorSintatico\GR2slrRulesId.txt','r') as archive:  #Lectura del archivo de las reglas gramaticales
             rulesID = []
             for line in archive:
                 line = line.strip() #Quito los '\n' de ambos lados de la cadena del renglon
-                subLine = line.split()
+                subLine = line.split() #Elimina los espacios, metiendolos en lista
                 rulesID.append([int(subLine[0]),int(subLine[1])])    #se agrega una lista de la cadena omitiendo los espacios y el primer valor del texto, como es el numero de la fila
-        #print(rulesID)
-        indice = 0
-        pila=[0]
+        
         lexico = []
         for token in lexicoAnalizado:   #Guarda solo los tokens de la lista de diccionarios del LEXICO
             lexico.append(token['IDtoken'])
 
-        #print(lexico)        
+        #print("lexico ",lexico)        
+        '''fila = pila[-1]
+        columna = lexico[indice]   #lexico[cont]
+        accion = int(tableSintax[fila][columna])
+        print("fila ",fila)
+        print("columna ",columna)
+        print("tableSintaxAccion ",accion) #-2'''
         
+        indice = 0
+        pila=[0]
+        message = "Analisis sintatico FALLIDA"
         while(indice<=(len(lexico)-1)):
             fila = pila[-1]
             columna = lexico[indice]   #lexico[cont]
-            accion = int(tableSintax[fila][columna])
+            '''print("pila ", pila)
+            print("fila ", fila, type(fila))'''
+            accion = tableSintax[fila][columna]
+            #print("tableSintaxAccion ",accion) 
             if (accion ==-1):   #Aceptar
+                message = "Analisis sintatico EXITOSA"
                 break
-            if (accion == 0):
-                break  #Salir error
+            if (accion == 0): #Salir error
+                break  
+
             if (accion > 0):
                 pila.append(lexico[indice])
                 indice+=1
@@ -297,12 +296,15 @@ class Ui_MainWindow(object):
                 reduc = rulesID[abs(accion)-1]
                 for d in range(reduc[1]*2):
                     pila.pop()
-                fila=pila[-1] #guardar valor ultimo de la pila ESTADO ANTERIOR
-                pila.append(reduc[0])
-                columna=reduc[0]
-                #tableSintax[fila][columna]? tableSintax[fila][columna]: 0 #Poner validacion 
-                pila.append(tableSintax[fila][columna])
-        return ''
+                fila=pila[-1] #Guardar valor ultimo de la pila ESTADO ANTERIOR
+                pila.append(reduc[0]) #Agregar regla a la pila
+                columna=reduc[0] #Actualizar 
+
+                if tableSintax[fila][columna]==0:
+                    break
+                else:
+                    pila.append(tableSintax[fila][columna])
+        return message
 
 if __name__ == "__main__":
     import sys
