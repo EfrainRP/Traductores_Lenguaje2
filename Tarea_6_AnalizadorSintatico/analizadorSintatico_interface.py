@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         text = self.InputText.toPlainText()
         #self.inputText2.setPlainText(text)
         listLexico = self.analizadorLexico(text)
-        self.inputText2.setPlainText(self.analizadorSintatico(text),listLexico)
+        self.inputText2.setPlainText(self.analizadorSintatico(listLexico))
         for r in range(len(listLexico),self.tableTokens.rowCount()):
             rowAct = self.tableTokens.removeRow(len(listLexico))
         for r in range(len(listLexico)):
@@ -245,7 +245,7 @@ class Ui_MainWindow(object):
             #print(elemento)
         return elementos    # elementos({'IDtoken':IDtoken,'token':token,'lexema':lexema})
 
-    def analizadorSintatico(self, cadena0,lexico):
+    def analizadorSintatico(self,lexicoAnalizado):
         '''fila = pilapop
         columna = lexico[cont]
         accion = tabla[fila][columna]
@@ -270,25 +270,39 @@ class Ui_MainWindow(object):
             rulesID = []
             for line in archive:
                 line = line.strip() #Quito los '\n' de ambos lados de la cadena del renglon
-                rulesID.append(line.split())    #se agrega una lista de la cadena omitiendo los espacios y el primer valor del texto, como es el numero de la fila
-
+                subLine = line.split()
+                rulesID.append([int(subLine[0]),int(subLine[1])])    #se agrega una lista de la cadena omitiendo los espacios y el primer valor del texto, como es el numero de la fila
+        #print(rulesID)
         indice = 0
-        cadena=cadena0+'$'
         pila=[0]
-        while(indice<=(len(cadena)-1)):
+        lexico = []
+        for token in lexicoAnalizado:   #Guarda solo los tokens de la lista de diccionarios del LEXICO
+            lexico.append(token['IDtoken'])
+
+        #print(lexico)        
+        
+        while(indice<=(len(lexico)-1)):
             fila = pila[-1]
-            columna = lexico['IDtoken'][::]    #lexico[cont]
-            accion = tableSintax[fila][columna]
+            columna = lexico[indice]   #lexico[cont]
+            accion = int(tableSintax[fila][columna])
             if (accion ==-1):   #Aceptar
                 break
-            if (accion >= 0):
-                push(lexico[cont])
-                push(accion)
+            if (accion == 0):
+                break,  #Salir error
+            if (accion > 0):
+                pila.append(lexico[indice])
+                indice+=1
+                pila.append(accion)
             if (accion <-1):
-                pops
-                fila=ptop()
-                columna=ladoIzq
-                push(tabla[fila][columna])
+                reduc = rulesID[abs(accion)-1]
+                for d in range(reduc[1]*2):
+                    pila.pop()
+                fila=pila[-1] #guardar valor ultimo de la pila ESTADO ANTERIOR
+                pila.append(reduc[0])
+                columna=reduc[0]
+                tableSintax[fila][columna]? tableSintax[fila][columna]: 0 #Poner validacion 
+                pila.append(tableSintax[fila][columna])
+        return ''
 
 if __name__ == "__main__":
     import sys
