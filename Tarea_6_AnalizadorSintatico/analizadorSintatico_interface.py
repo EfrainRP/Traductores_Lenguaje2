@@ -288,7 +288,7 @@ class Ui_MainWindow(object):
             if (accion ==-1):   #Aceptar
                 break
             if (accion == 0):
-                break,  #Salir error
+                break  #Salir error
             if (accion > 0):
                 pila.append(lexico[indice])
                 indice+=1
@@ -300,7 +300,7 @@ class Ui_MainWindow(object):
                 fila=pila[-1] #guardar valor ultimo de la pila ESTADO ANTERIOR
                 pila.append(reduc[0])
                 columna=reduc[0]
-                tableSintax[fila][columna]? tableSintax[fila][columna]: 0 #Poner validacion 
+                #tableSintax[fila][columna]? tableSintax[fila][columna]: 0 #Poner validacion 
                 pila.append(tableSintax[fila][columna])
         return ''
 
