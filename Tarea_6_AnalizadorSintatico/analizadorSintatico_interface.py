@@ -263,14 +263,6 @@ class Ui_MainWindow(object):
         lexico = []
         for token in lexicoAnalizado:   #Guarda solo los tokens de la lista de diccionarios del LEXICO
             lexico.append(token['IDtoken'])
-
-        #print("lexico ",lexico)        
-        '''fila = pila[-1]
-        columna = lexico[indice]   #lexico[cont]
-        accion = int(tableSintax[fila][columna])
-        print("fila ",fila)
-        print("columna ",columna)
-        print("tableSintaxAccion ",accion) #-2'''
         
         indice = 0 #Indice para recorrer la sentencia/tabla de simbolos a analizar
         pila=[0]   #Pila del grafo para el analizador sintatico
@@ -278,8 +270,6 @@ class Ui_MainWindow(object):
         while(indice<=(len(lexico)-1)): #Ciclo para recorrer toda la sentancia a analizar
             fila = pila[-1] #Obtiene la fila del ultimo valor de la pila 
             columna = lexico[indice]   #Obtiene la columna de la tabla de simbolos para analizar con la tabla sintatico 
-            '''print("pila ", pila)
-            print("fila ", fila, type(fila))'''
             accion = tableSintax[fila][columna] #Determina la accion mediante la tabla(arreglo) sintatico
             #print("tableSintaxAccion ",accion) 
             if (accion ==-1):   #Aceptara la sentencia
