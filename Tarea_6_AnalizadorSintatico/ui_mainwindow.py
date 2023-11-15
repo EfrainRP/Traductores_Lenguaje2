@@ -1,84 +1,44 @@
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+
 from PySide6.QtWidgets import (QApplication, QHeaderView, QMainWindow, QPushButton,
     QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
     QTextEdit, QWidget)
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(792, 558)
-        icon = QIcon()
-        icon.addFile(u"Tarea_6_AnalizadorSintatico\interfaz\PNG\image.png", QSize(), QIcon.Normal, QIcon.Off)
-        MainWindow.setWindowIcon(icon)
-        self.lexico = QWidget(MainWindow)
-        self.lexico.setObjectName(u"lexico")
-        self.pushButton = QPushButton(self.lexico)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setGeometry(QRect(360, 60, 81, 41))
-        self.pushButton.clicked.connect(self.analizar)
-        self.tableTokens = QTableWidget(self.lexico)
-        self.tableTokens.setObjectName(u"tableTokens")
-        self.tableTokens.setColumnCount(3)
-        self.tableTokens.setRowCount(0)
+from mainwindow_ui import Ui_MainWindow
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
         
-        header = self.tableTokens.horizontalHeader()
-        headerRow = self.tableTokens.verticalHeader()
-        font = QFont()
-        font.setBold(True)
-        header.setFont(font)
-        headerRow.setFont(font)
-        self.tableTokens.setHorizontalHeaderLabels(["Lexemas","Tokens","Numero"])
-        self.tableTokens.setGeometry(QRect(20, 310, 741, 221))
-
-        self.InputText = QTextEdit(self.lexico)
-        self.InputText.setObjectName(u"InputText")
-        self.InputText.setGeometry(QRect(30, 20, 281, 271))
-        self.inputText2 = QTextEdit(self.lexico)
-        self.inputText2.setObjectName(u"inputText2")
-        self.inputText2.setGeometry(QRect(480, 20, 281, 271))
-        MainWindow.setCentralWidget(self.lexico)
-        self.statusbar = QStatusBar(MainWindow)
-        self.statusbar.setObjectName(u"statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-
-        self.retranslateUi(MainWindow)
-
-        QMetaObject.connectSlotsByName(MainWindow)
-    # setupUi
-
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Analizar", None))
-    # retranslateUi
+        self.ui.pushButton.clicked.connect(self.analizar)
 
     def analizar(self):
-        text = self.InputText.toPlainText()
+        text = self.ui.InputText.toPlainText()
         #self.inputText2.setPlainText(text)
         listLexico = self.analizadorLexico(text)
-        self.inputText2.setPlainText(self.analizadorSintatico(listLexico))
-        for r in range(len(listLexico),self.tableTokens.rowCount()):
-            rowAct = self.tableTokens.removeRow(len(listLexico))
+        self.ui.inputText2.setPlainText(self.analizadorSintatico(listLexico))
+        for r in range(len(listLexico),self.ui.tableTokens.rowCount()):
+            rowAct = self.ui.tableTokens.removeRow(len(listLexico))
         for r in range(len(listLexico)):
-            rowAct = self.tableTokens.rowCount()
+            rowAct = self.ui.tableTokens.rowCount()
             elemLexico = listLexico[r]
             print(elemLexico)
+            itemLexema = QTableWidgetItem(listLexico[r]["lexema"])
+            itemToken = QTableWidgetItem(listLexico[r]["token"])
+            itemId = QTableWidgetItem(str(listLexico[r]["IDtoken"]))
             if rowAct<=r:
-                self.tableTokens.insertRow(rowAct)
-                self.tableTokens.setItem(r,0,QTableWidgetItem(listLexico[r]["lexema"]))
-                self.tableTokens.setItem(r,1,QTableWidgetItem(listLexico[r]["token"]))
-                self.tableTokens.setItem(r,2,QTableWidgetItem(str(listLexico[r]["IDtoken"])))
+                self.ui.tableTokens.insertRow(rowAct)
+                self.ui.tableTokens.setItem(r,0,itemLexema)
+                self.ui.tableTokens.setItem(r,1,itemToken)
+                self.ui.tableTokens.setItem(r,2,itemId)
             else: 
-                self.tableTokens.setItem(r,0,QTableWidgetItem(listLexico[r]["lexema"]))
-                self.tableTokens.setItem(r,1,QTableWidgetItem(listLexico[r]["token"]))
-                self.tableTokens.setItem(r,2,QTableWidgetItem(str(listLexico[r]["IDtoken"])))
-        
+                self.ui.tableTokens.setItem(r,0,itemLexema)
+                self.ui.tableTokens.setItem(r,1,itemToken)
+                self.ui.tableTokens.setItem(r,2,itemId)
 
     def analizadorLexico(self, cadena0):
         elementos=[]
@@ -266,14 +226,14 @@ class Ui_MainWindow(object):
         
         indice = 0 #Indice para recorrer la sentencia/tabla de simbolos a analizar
         pila=[0]   #Pila del grafo para el analizador sintatico
-        message = "Analisis sintatico FALLIDA" #Inicializacion de mensaje Sintatico
+        message = " -> Lexical Analysis completed\n\n -> Parse Error:  Syntax Error " #Inicializacion de mensaje Sintatico
         while(indice<=(len(lexico)-1)): #Ciclo para recorrer toda la sentancia a analizar
             fila = pila[-1] #Obtiene la fila del ultimo valor de la pila 
             columna = lexico[indice]   #Obtiene la columna de la tabla de simbolos para analizar con la tabla sintatico 
             accion = tableSintax[fila][columna] #Determina la accion mediante la tabla(arreglo) sintatico
             #print("tableSintaxAccion ",accion) 
             if (accion ==-1):   #Aceptara la sentencia
-                message = "Analisis sintatico EXITOSA"
+                message = "-> Lexical Analysis completed\n\n -> Sintax Analysis completed with no errors\n\n <> Process finished."
                 break
             if (accion == 0): #Saldra del analisis, dando como error el analisis
                 break  
@@ -294,12 +254,10 @@ class Ui_MainWindow(object):
                 else:
                     pila.append(tableSintax[fila][columna]) #Apila el valor resultante de la fila,columna
         return message #Regresara el mensaje resultante del analisis sintatico
-
+    
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
-    MainWindow = QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    window = MainWindow()
+    window.show()
     sys.exit(app.exec_())
