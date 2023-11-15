@@ -272,39 +272,38 @@ class Ui_MainWindow(object):
         print("columna ",columna)
         print("tableSintaxAccion ",accion) #-2'''
         
-        indice = 0
-        pila=[0]
-        message = "Analisis sintatico FALLIDA"
-        while(indice<=(len(lexico)-1)):
-            fila = pila[-1]
-            columna = lexico[indice]   #lexico[cont]
+        indice = 0 #Indice para recorrer la sentencia/tabla de simbolos a analizar
+        pila=[0]   #Pila del grafo para el analizador sintatico
+        message = "Analisis sintatico FALLIDA" #Inicializacion de mensaje Sintatico
+        while(indice<=(len(lexico)-1)): #Ciclo para recorrer toda la sentancia a analizar
+            fila = pila[-1] #Obtiene la fila del ultimo valor de la pila 
+            columna = lexico[indice]   #Obtiene la columna de la tabla de simbolos para analizar con la tabla sintatico 
             '''print("pila ", pila)
             print("fila ", fila, type(fila))'''
-            accion = tableSintax[fila][columna]
+            accion = tableSintax[fila][columna] #Determina la accion mediante la tabla(arreglo) sintatico
             #print("tableSintaxAccion ",accion) 
-            if (accion ==-1):   #Aceptar
+            if (accion ==-1):   #Aceptara la sentencia
                 message = "Analisis sintatico EXITOSA"
                 break
-            if (accion == 0): #Salir error
+            if (accion == 0): #Saldra del analisis, dando como error el analisis
                 break  
-
-            if (accion > 0):
-                pila.append(lexico[indice])
-                indice+=1
-                pila.append(accion)
-            if (accion <-1):
-                reduc = rulesID[abs(accion)-1]
-                for d in range(reduc[1]*2):
+            if (accion > 0): #Si es positivo la accion
+                pila.append(lexico[indice]) #Apila el caracter de la sentencia
+                indice+=1   #Recorre el caracter a analizar
+                pila.append(accion) #Apila la accion positiva
+            if (accion <-1): #Si es negativo la accion
+                reduc = rulesID[abs(accion)-1] #Obtenemos la longitud de la regla a reducir
+                for d in range(reduc[1]*2): #Desapila segun la (longitud * 2) de la regla
                     pila.pop()
-                fila=pila[-1] #Guardar valor ultimo de la pila ESTADO ANTERIOR
-                pila.append(reduc[0]) #Agregar regla a la pila
-                columna=reduc[0] #Actualizar 
+                fila=pila[-1] #Guardar valor ultimo de la pila (ESTADO ANTERIOR)
+                pila.append(reduc[0]) #Agregar el numero de regla a la pila
+                columna=reduc[0] #Actualizar la columna con la regla
 
-                if tableSintax[fila][columna]==0:
-                    break
+                if tableSintax[fila][columna]==0: #Si el valor de la tabla(arreglo) sintatico es 0 
+                    break #continuara con el analisis
                 else:
-                    pila.append(tableSintax[fila][columna])
-        return message
+                    pila.append(tableSintax[fila][columna]) #Apila el valor resultante de la fila,columna
+        return message #Regresara el mensaje resultante del analisis sintatico
 
 if __name__ == "__main__":
     import sys
